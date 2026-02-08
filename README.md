@@ -1,4 +1,4 @@
-# <div align="center"> Laura-Core</div>
+# <div align="center"> laura_core</div>
 
 <div  align="center"> 
 
@@ -128,11 +128,11 @@ For details on the latest updates, bug fixes, and improvements, check the full c
 
 This project is licensed under **GPLv3**. See the [LICENSE][license-link] file for details.
 
-[changelog-link]:https://github.com/hanstibberio/Laura/blob/master/laura_core/CHANGELOG.md
+[changelog-link]:https://github.com/hanstibberio/laura_core/blob/main/CHANGELOG.md
 
-[license-link]:https://github.com/hanstibberio/Laura/blob/master/LICENSE
+[license-link]:https://github.com/hanstibberio/laura_core/blob/main/LICENSE
 
-[license-badge]:https://img.shields.io/github/license/hanstibberio/laura?label=license&color=success
+[license-badge]:https://img.shields.io/github/license/hanstibberio/laura_core?label=license&color=success
 
 [crates-link]:https://crates.io/crates/laura_core
 

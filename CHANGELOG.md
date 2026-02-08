@@ -9,11 +9,13 @@ This project follows [Keep a Changelog][changelog-link] and adheres to [Semantic
 
 ### Added
 
-- Added support for parsing **Standard Algebraic Notation (SAN)** moves.
+- Added support for parsing moves in **Standard Algebraic Notation (SAN)**.
 
 ### Changed
 
-- Updated to the Rust 2024 Edition and raised the MSRV to **1.85.0**.
+- Migrated the crate to the **Rust 2024 Edition** and raised the **MSRV to 1.85.0**.
+- Updated the README and fixed links to point to the standalone **laura_core** repository.
+- Split `laura_core` into its **own dedicated GitHub repository**, fully decoupled from the chess engine.
 
 ---
 
