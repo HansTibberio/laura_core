@@ -1,7 +1,7 @@
 /*
     Laura-Core: a fast and efficient move generator for chess engines.
 
-    Copyright (C) 2024-2025 HansTibberio <hanstiberio@proton.me>
+    Copyright (C) 2024-2026 HansTibberio <hanstiberio@proton.me>
 
     Laura-Core is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@ use core::fmt;
 use core::mem::transmute;
 use core::str::FromStr;
 
-use crate::{BitBoard, Color, File, Rank, SquareDocs};
+use crate::{BitBoard, Color, File, Rank, SquareDocs, SquareParseError};
 
 SquareDocs! {
     A1, B1, C1, D1, E1, F1, G1, H1,
@@ -36,17 +36,17 @@ SquareDocs! {
 
 /// Parse a square from its algebraic notation, e.g., "e4" or "g5".
 impl FromStr for Square {
-    type Err = &'static str;
+    type Err = SquareParseError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         if s.len() != 2 {
-            return Err("Invalid Square!");
+            return Err(SquareParseError::InvalidLength);
         };
 
         let index: usize = Self::SQUARE_NAMES
             .iter()
-            .position(|&tgt| tgt == s)
-            .ok_or("Invalid Square Name!")?;
+            .position(|&name| name == s)
+            .ok_or(SquareParseError::InvalidName)?;
 
         Ok(Square::from_index(index))
     }

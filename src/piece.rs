@@ -1,7 +1,7 @@
 /*
     Laura-Core: a fast and efficient move generator for chess engines.
 
-    Copyright (C) 2024-2025 HansTibberio <hanstiberio@proton.me>
+    Copyright (C) 2024-2026 HansTibberio <hanstiberio@proton.me>
 
     Laura-Core is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
     along with Laura-Core. If not, see <https://www.gnu.org/licenses/>.
 */
 
-use crate::Color;
+use crate::{Color, PieceParseError};
 use core::fmt;
 
 /// Enum representing the different types of chess pieces.
@@ -153,7 +153,7 @@ impl fmt::Display for Piece {
 /// Attempt to convert a character into a `Piece`.
 /// Returns an error if the character does not correspond to a valid chess piece.
 impl TryFrom<char> for Piece {
-    type Error = &'static str;
+    type Error = PieceParseError;
 
     fn try_from(c: char) -> Result<Self, Self::Error> {
         match c {
@@ -169,7 +169,7 @@ impl TryFrom<char> for Piece {
             'r' => Ok(Piece::BR),
             'q' => Ok(Piece::BQ),
             'k' => Ok(Piece::BK),
-            _ => Err("Invalid piece character"),
+            _ => Err(PieceParseError::InvalidChar(c)),
         }
     }
 }

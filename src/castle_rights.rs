@@ -1,7 +1,7 @@
 /*
     Laura-Core: a fast and efficient move generator for chess engines.
 
-    Copyright (C) 2024-2025 HansTibberio <hanstiberio@proton.me>
+    Copyright (C) 2024-2026 HansTibberio <hanstiberio@proton.me>
 
     Laura-Core is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 use core::fmt;
 use core::str::FromStr;
 
-use crate::{BitBoard, Color, File, Square};
+use crate::{BitBoard, CastleRightsParseError, Color, File, Square};
 
 // This implementation is based on the approach used in Carp, which licensed under the GPLv3.
 // Source: https://github.com/dede1751/carp/blob/main/chess/src/castle.rs
@@ -34,9 +34,13 @@ pub struct CastleRights(u8);
 /// Implement the `FromStr` trait for `CastleRights`.
 /// This allows parsing a string into a `CastleRights` object.
 impl FromStr for CastleRights {
-    type Err = &'static str;
+    type Err = CastleRightsParseError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s == "-" {
+            return Ok(CastleRights::null());
+        }
+
         let mut rights: u8 = 0;
 
         for ch in s.chars() {
@@ -45,13 +49,8 @@ impl FromStr for CastleRights {
                 'Q' => rights |= CASTLE_WQ_MASK,
                 'k' => rights |= CASTLE_BK_MASK,
                 'q' => rights |= CASTLE_BQ_MASK,
-                '-' => {
-                    if s.len() != 1 {
-                        return Err("Invalid format for castling rights");
-                    }
-                    rights = 0;
-                }
-                _ => return Err("Invalid character in castling rights"),
+                '-' => return Err(CastleRightsParseError::InvalidDashUsage),
+                c => return Err(CastleRightsParseError::InvalidChar(c)),
             }
         }
 
@@ -249,6 +248,30 @@ impl CastleRights {
     #[inline(always)]
     pub const fn has_queenside(self, color: Color) -> bool {
         self.0 & QUEENSIDE_CASTLE[color as usize] != 0
+    }
+
+    /// Enables white kingside castling.
+    #[inline(always)]
+    pub const fn set_white_kingside(&mut self) {
+        self.0 |= CASTLE_WK_MASK;
+    }
+
+    /// Enables white queenside castling.
+    #[inline(always)]
+    pub const fn set_white_queenside(&mut self) {
+        self.0 |= CASTLE_WQ_MASK;
+    }
+
+    /// Enables black kingside castling.
+    #[inline(always)]
+    pub const fn set_black_kingside(&mut self) {
+        self.0 |= CASTLE_BK_MASK;
+    }
+
+    /// Enables black queenside castling.
+    #[inline(always)]
+    pub const fn set_black_queenside(&mut self) {
+        self.0 |= CASTLE_BQ_MASK;
     }
 
     /// Updates the castling rights after a move from `src` to `dest`.

@@ -1,7 +1,7 @@
 /*
     Laura-Core: a fast and efficient move generator for chess engines.
 
-    Copyright (C) 2024-2025 HansTibberio <hanstiberio@proton.me>
+    Copyright (C) 2024-2026 HansTibberio <hanstiberio@proton.me>
 
     Laura-Core is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 use core::fmt::Write;
 use core::str::FromStr;
 
-use crate::{BitBoard, CastleRights, Color, File, Piece, Rank, Square, Zobrist};
+use crate::{BitBoard, BoardParseError, CastleRights, Color, File, Piece, Rank, Square, Zobrist};
 
 use super::FenBuffer;
 
@@ -119,19 +119,25 @@ impl core::fmt::Display for Board {
 /// into 6 parts: piece placement, active color, castling rights, en passant target
 /// square, halfmove clock, and fullmove number.
 impl FromStr for Board {
-    type Err = &'static str;
+    type Err = BoardParseError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let mut fen_iter: core::str::SplitWhitespace<'_> = s.split_whitespace();
 
-        let board_str: &str = fen_iter.next().ok_or("FEN string is too short")?;
-        let side_str: &str = fen_iter.next().ok_or("Missing side to move")?;
-        let castling_str: &str = fen_iter.next().ok_or("Missing castling rights")?;
-        let enpassant_str: &str = fen_iter.next().ok_or("Missing en passant square")?;
-        let halfmove_str: &str = fen_iter.next().ok_or("Missing halfmove clock")?;
-        let fullmove_str: &str = fen_iter.next().ok_or("Missing fullmove number")?;
+        let board_str: &str = fen_iter.next().ok_or(BoardParseError::FenTooShort)?;
+        let side_str: &str = fen_iter.next().ok_or(BoardParseError::MissingSideToMove)?;
+        let castling_str: &str = fen_iter
+            .next()
+            .ok_or(BoardParseError::MissingCastlingRights)?;
+        let enpassant_str: &str = fen_iter.next().ok_or(BoardParseError::MissingEnPassant)?;
+        let halfmove_str: &str = fen_iter
+            .next()
+            .ok_or(BoardParseError::MissingHalfmoveClock)?;
+        let fullmove_str: &str = fen_iter
+            .next()
+            .ok_or(BoardParseError::MissingFullmoveNumber)?;
 
-        let mut board: Board = Self::new();
+        let mut board: Board = Self::empty();
         let mut count: i32 = 0;
 
         let (mut file, mut rank) = (File::A, Rank::Eight);
@@ -139,7 +145,7 @@ impl FromStr for Board {
             match token {
                 '/' => {
                     if count != 8 {
-                        return Err("FEN row does not contain exactly 8 squares.");
+                        return Err(BoardParseError::InvalidRowLength);
                     };
 
                     rank = rank.down();
@@ -152,7 +158,10 @@ impl FromStr for Board {
                     }
                 }
                 _ => {
-                    board.set_piece(Piece::try_from(token)?, Square::from_file_rank(file, rank));
+                    board.set_piece(
+                        Piece::try_from(token).map_err(BoardParseError::InvalidPiece)?,
+                        Square::from_file_rank(file, rank),
+                    );
                     file = file.right();
                     count += 1;
                 }
@@ -160,7 +169,7 @@ impl FromStr for Board {
         }
 
         if count != 8 {
-            return Err("The board layout is invalid.");
+            return Err(BoardParseError::InvalidBoardLayout);
         }
 
         board.side = match side_str {
@@ -169,10 +178,12 @@ impl FromStr for Board {
                 Color::White
             }
             "b" => Color::Black,
-            _ => return Err("Invalid side to move, should be 'w' or 'b'."),
+            _ => return Err(BoardParseError::InvalidSideToMove),
         };
 
-        let castle_rights: CastleRights = castling_str.parse()?;
+        let castle_rights: CastleRights = castling_str
+            .parse()
+            .map_err(BoardParseError::InvalidCastlingRights)?;
         board.castling = castle_rights;
         board.zobrist.hash_castle(castle_rights);
 
@@ -181,9 +192,9 @@ impl FromStr for Board {
             _ => {
                 let ep_square: Square = enpassant_str
                     .parse()
-                    .map_err(|_| "Invalid en passant square")?;
+                    .map_err(BoardParseError::InvalidEnPassantSquare)?;
                 if !matches!(ep_square.rank(), Rank::Three | Rank::Six) {
-                    return Err("Invalid en passant rank.");
+                    return Err(BoardParseError::InvalidEnPassantRank);
                 }
                 board.zobrist.hash_enpassant(ep_square);
                 Some(ep_square)
@@ -192,16 +203,16 @@ impl FromStr for Board {
 
         board.fifty_move = halfmove_str
             .parse::<u8>()
-            .map_err(|_| "Invalid halfmove clock")?;
+            .map_err(|_| BoardParseError::InvalidHalfmoveClock)?;
         if board.fifty_move > 100 {
-            return Err("Halfmove Clock exceeds the maximum allowed value.");
+            return Err(BoardParseError::HalfmoveClockOverflow);
         }
 
         board.full_move = fullmove_str
             .parse::<u16>()
-            .map_err(|_| "Invalid fullmove number")?;
+            .map_err(|_| BoardParseError::InvalidFullmoveNumber)?;
         if board.full_move == 0 {
-            return Err("Fullmove number must be positive.");
+            return Err(BoardParseError::FullmoveMustBePositive);
         }
 
         board.checkers = board.checkers();
@@ -226,7 +237,7 @@ impl Board {
     /// Creates a new empty board with no pieces. The bitboards are initialized as empty,
     /// and castling rights, en passant square, and other attributes are set to their
     /// default (empty or zero) values.
-    const fn new() -> Self {
+    pub const fn empty() -> Self {
         Self {
             pieces_bitboard: [BitBoard::EMPTY; Piece::COUNT],
             sides_bitboard: [BitBoard::EMPTY; 2],

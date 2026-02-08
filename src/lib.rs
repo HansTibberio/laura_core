@@ -1,7 +1,7 @@
 /*
     Laura-Core: a fast and efficient move generator for chess engines.
 
-    Copyright (C) 2024-2025 HansTibberio <hanstiberio@proton.me>
+    Copyright (C) 2024-2026 HansTibberio <hanstiberio@proton.me>
 
     Laura-Core is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@ mod bitboard;
 mod board;
 mod castle_rights;
 mod color;
+mod errors;
 mod file;
 mod generate;
 mod macros;
@@ -40,6 +41,7 @@ pub use board::board::*;
 pub use board::movegen::*;
 pub use castle_rights::*;
 pub use color::*;
+pub use errors::*;
 pub use file::*;
 #[cfg(not(feature = "bmi2"))]
 pub use generate::black_magics::*;
