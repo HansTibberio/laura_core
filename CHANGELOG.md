@@ -5,7 +5,7 @@ This project follows [Keep a Changelog][changelog-link] and adheres to [Semantic
 
 ---
 
-## Unreleased
+## [Unreleased]
 
 ### Changed
 
