@@ -5,7 +5,7 @@ This project follows [Keep a Changelog][changelog-link] and adheres to [Semantic
 
 ---
 
-## [Unreleased]
+## [0.4.0] - 2026-02-08
 
 ### Added
 
