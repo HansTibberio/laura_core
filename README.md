@@ -8,7 +8,7 @@
 
 </div>
 
-**Laura-Core** a fast and efficient move generator for chess engines.
+**laura_core** a fast and efficient move generator for chess engines.
 
 ## Features
 - **Bitboards** for efficient board representation.  
