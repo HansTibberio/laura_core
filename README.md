@@ -2,6 +2,7 @@
 
 <div  align="center"> 
 
+[![Build][build-badge]][build-link]
 [![Crates.io Version][crates-badge]][crates-link]
 [![License][license-badge]][license-link]
 
@@ -128,11 +129,15 @@ For details on the latest updates, bug fixes, and improvements, check the full c
 
 This project is licensed under **GPLv3**. See the [LICENSE][license-link] file for details.
 
+[build-link]:https://github.com/HansTibberio/laura_core/actions/workflows/build.yml
+
+[build-badge]:https://img.shields.io/github/actions/workflow/status/HansTibberio/laura_core/build.yml
+
 [changelog-link]:https://github.com/hanstibberio/laura_core/blob/main/CHANGELOG.md
 
 [license-link]:https://github.com/hanstibberio/laura_core/blob/main/LICENSE
 
-[license-badge]:https://img.shields.io/github/license/hanstibberio/laura_core?label=license&color=success
+[license-badge]:https://img.shields.io/github/license/hanstibberio/laura_core?color=success
 
 [crates-link]:https://crates.io/crates/laura_core
 
