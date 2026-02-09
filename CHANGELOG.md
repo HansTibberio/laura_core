@@ -7,6 +7,18 @@ This project follows [Keep a Changelog][changelog-link] and adheres to [Semantic
 
 ## [Unreleased]
 
+---
+
+## [0.5.0] - 2026-02-08
+
+### Added
+
+- Add setter functions to `CastleRights` for enabling individual castling rights:
+    - `set_white_kingside`
+    - `set_white_queenside`
+    - `set_black_kingside`
+    - `set_black_queenside`
+
 ### Changed
 
 - Introduce `BoardParseError` for detailed FEN parsing failures
