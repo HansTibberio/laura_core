@@ -48,7 +48,7 @@ impl Board {
         let move_type: MoveType = mv.get_type();
         let is_capture: bool = mv.is_capture();
 
-        let piece: Piece = self.piece_on(src).unwrap();
+        let piece: Piece = unsafe { self.piece_on(src).unwrap_unchecked() };
         let piece_type: PieceType = piece.piece_type();
 
         // Remove the piece from its source square

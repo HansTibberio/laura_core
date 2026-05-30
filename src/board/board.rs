@@ -322,7 +322,7 @@ impl Board {
     /// as it calls `unwrap()` on an `Option`.
     #[inline(always)]
     pub fn remove_piece(&mut self, square: Square) {
-        let piece: Piece = self.piece_on(square).unwrap();
+        let piece: Piece = unsafe { self.piece_on(square).unwrap_unchecked() };
         let index: usize = piece.piece_index();
         let color: usize = piece.color() as usize;
 
@@ -334,7 +334,7 @@ impl Board {
 
     /// Returns the piece located on the specified square.
     #[inline(always)]
-    pub fn piece_on(&self, square: Square) -> Option<Piece> {
+    pub const fn piece_on(&self, square: Square) -> Option<Piece> {
         self.piece_map[square.to_index()]
     }
 

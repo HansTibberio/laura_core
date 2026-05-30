@@ -104,9 +104,12 @@ impl Board {
     /// Uses the current combined board state to evaluate potential checks.
     #[inline(always)]
     pub fn checkers(&self) -> BitBoard {
-        self.attackers(
-            self.allied_king().to_square().unwrap(),
-            self.combined_bitboard(),
-        )
+        let king: Square = unsafe { self.allied_king().to_square().unwrap_unchecked() };
+        let blockers: BitBoard = self.combined_bitboard();
+        self.enemy_presence()
+            & (self.knights() & get_knight_attacks(king)
+                | self.pawns() & get_pawn_attacks(self.side, king)
+                | (self.queens() | self.bishops()) & get_bishop_attacks(king, blockers)
+                | (self.queens() | self.rooks()) & get_rook_attacks(king, blockers))
     }
 }

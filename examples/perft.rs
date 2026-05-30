@@ -110,7 +110,7 @@ pub fn perft<const DIV: bool>(board: &Board, depth: usize) -> usize {
     let duration: std::time::Duration = start.elapsed();
 
     let nps: f64 = total_nodes as f64 / duration.as_secs_f64();
-    println!("{total_nodes} nodes in {duration:?} -> {nps:.0} nodes/s");
+    println!("{total_nodes} nodes in {duration:?} -> {nps:.0} nodes/s\n");
 
     total_nodes
 }
@@ -130,17 +130,16 @@ pub fn inner_perft<const DIV: bool>(board: &Board, depth: usize) -> usize {
     }
 
     enumerate_legal_moves::<AllMoves, _>(board, |mv: Move| -> bool {
-        let mut nodes: usize = 0;
-        if DIV && depth == 1 {
-            nodes = 1;
+        let nodes: usize = if DIV && depth == 1 {
+            1
         } else {
             let board_res: Board = board.make_move(mv);
-            nodes = if depth == 1 {
+            if depth == 1 {
                 1
             } else {
                 inner_perft::<false>(&board_res, depth - 1)
-            };
-        }
+            }
+        };
 
         total += nodes;
 
@@ -157,8 +156,7 @@ pub fn inner_perft<const DIV: bool>(board: &Board, depth: usize) -> usize {
 fn main() {
     for (fen, correct_count, depth) in PERFT_TEST {
         let board: Board = Board::from_str(fen).unwrap();
-        println!("");
-        println!("{fen}");
+        println!("\n{fen}");
 
         let nodes: usize = perft::<false>(&board, depth);
         assert_eq!(nodes, correct_count as usize, "Perft Test Failed");

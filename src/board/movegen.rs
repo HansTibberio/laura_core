@@ -153,7 +153,7 @@ where
     }
     enumerate_king_moves::<M, F>(
         board,
-        board.allied_king().to_square().unwrap(),
+        unsafe { board.allied_king().to_square().unwrap_unchecked() },
         &mut handler,
     );
     true
@@ -178,6 +178,7 @@ where
 {
     const RANK_7: [BitBoard; 2] = [BitBoard::RANK_7, BitBoard::RANK_2];
     const RANK_3: [BitBoard; 2] = [BitBoard::RANK_3, BitBoard::RANK_6];
+    let check_mask = check_mask::<IN_CHECK>(board);
 
     //Single & Double Push
     if M::QUIETS {
@@ -193,8 +194,8 @@ where
             & !board.combined_bitboard();
 
         if IN_CHECK {
-            single_push &= check_mask::<IN_CHECK>(board);
-            double_push &= check_mask::<IN_CHECK>(board);
+            single_push &= check_mask;
+            double_push &= check_mask;
         }
 
         for dest in single_push {
@@ -219,8 +220,8 @@ where
             & board.enemy_presence();
 
         if IN_CHECK {
-            capture_left &= check_mask::<IN_CHECK>(board);
-            capture_right &= check_mask::<IN_CHECK>(board);
+            capture_left &= check_mask;
+            capture_right &= check_mask;
         }
 
         for dest in capture_left {
@@ -360,7 +361,7 @@ where
     F: FnMut(Move) -> bool,
 {
     let pawns: BitBoard = src & !linear_pins;
-    let king_square: Square = board.allied_king().to_square().unwrap();
+    let king_square: Square = unsafe { board.allied_king().to_square().unwrap_unchecked() };
 
     // En Passant captures
     if let Some(en_passant) = board.enpassant_square {
