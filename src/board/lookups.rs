@@ -84,7 +84,7 @@ impl Board {
     /// Returns a [`BitBoard`] representing all enemy pieces that are attacking a specified square,
     /// based on the given blockers on the board. Evaluates potential attacks from enemy knights,
     /// kings, pawns, queens, bishops, and rooks against the square.
-    #[inline]
+    #[inline(always)]
     pub fn attackers(&self, square: Square, blockers: BitBoard) -> BitBoard {
         self.enemy_presence()
             & (self.knights() & get_knight_attacks(square)

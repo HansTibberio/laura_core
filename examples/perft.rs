@@ -118,7 +118,6 @@ pub fn perft<const DIV: bool>(board: &Board, depth: usize) -> usize {
 /// A helper function that performs the core Perft test recursively.
 /// It generates all possible moves for the board at the current depth and counts the number of nodes.
 /// For deeper levels, it recursively calls itself to count all possible move sequences.
-#[allow(unused_assignments)]
 pub fn inner_perft<const DIV: bool>(board: &Board, depth: usize) -> usize {
     let mut total: usize = 0;
 

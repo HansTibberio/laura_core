@@ -160,7 +160,7 @@ where
 }
 
 /// Enumerates the normal pawn moves for the given board, considering quiet moves and tactical moves.
-///  
+///
 /// This function handles the generation of all possible pawn normal moves, including:
 /// - Single and double pushes, with special handling for pawns on the second or seventh ranks.
 /// - Normal captures, considering any pins and the presence of enemy pieces.
@@ -309,7 +309,7 @@ where
 /// Enumerates all possible pawn promotion moves for a given pawn that has reached the promotion rank.
 /// The function handles both capture and quiet promotions, allowing the pawn to promote to any of the four pieces:
 /// Queen, Rook, Bishop, or Knight.
-///  
+///
 /// It handles:
 /// - Tactical moves (capture and quiet promotions) to Queen.
 /// - Quiet moves to Rook, Bishop, or Knight.

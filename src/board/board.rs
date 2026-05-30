@@ -225,7 +225,7 @@ impl Default for Board {
     /// Constructs a default chess board, representing the standard starting position
     /// for a chess game, using FEN notation. The default position is the classic setup
     /// with castling rights and no en passant.
-    #[inline]
+    #[inline(always)]
     fn default() -> Self {
         "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
             .parse()
@@ -303,6 +303,7 @@ impl Board {
     /// Sets a piece on the board at a given square and updates the corresponding bitboards
     /// and [`Zobrist`] hash. This method modifies both the specific piece bitboard and the
     /// side's [`BitBoard`] (either White or Black).
+    #[inline(always)]
     pub fn set_piece(&mut self, piece: Piece, square: Square) {
         let index: usize = piece.piece_index();
         let color: usize = piece.color() as usize;
@@ -319,6 +320,7 @@ impl Board {
     /// # Panics
     /// This function will panic if no piece is present on the specified square,
     /// as it calls `unwrap()` on an `Option`.
+    #[inline(always)]
     pub fn remove_piece(&mut self, square: Square) {
         let piece: Piece = self.piece_on(square).unwrap();
         let index: usize = piece.piece_index();
