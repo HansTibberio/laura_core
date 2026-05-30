@@ -723,7 +723,7 @@ where
 /// 2. Simulates removing those pieces to check if an enemy piece is attacking the king.
 /// 3. Collects all such pinning paths and returns them as bitboards.
 #[inline(always)]
-fn pinners(board: &Board) -> (BitBoard, BitBoard) {
+pub fn pinners(board: &Board) -> (BitBoard, BitBoard) {
     let king_square: Square = board.allied_king().to_square().unwrap();
     let blockers_mask: BitBoard = board.combined_bitboard();
 
