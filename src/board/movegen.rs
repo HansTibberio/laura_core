@@ -776,8 +776,8 @@ pub fn pinners(board: &Board) -> (BitBoard, BitBoard) {
 fn check_mask<const IN_CHECK: bool>(board: &Board) -> BitBoard {
     if IN_CHECK {
         get_between(
-            board.allied_king().to_square().unwrap(),
-            board.checkers.to_square().unwrap(),
+            unsafe { board.allied_king().to_square().unwrap_unchecked() },
+            unsafe { board.checkers.to_square().unwrap_unchecked() },
         ) | board.checkers
     } else {
         BitBoard::FULL
